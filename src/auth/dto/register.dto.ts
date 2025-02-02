@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
 
 export class RegisterDto {
 
@@ -20,3 +20,10 @@ export class LoginDto {
     @IsNotEmpty()
     password: string;
 }
+
+export class RefreshTokenDto {
+    @IsString()
+    @IsNotEmpty()
+    refreshToken: string;
+  }
+

@@ -1,7 +1,8 @@
-import { Body, Controller, Post, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Req, UnauthorizedException, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto, RegisterDto } from './dto/register.dto';
+import { LoginDto, RefreshTokenDto, RegisterDto } from './dto/register.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +15,36 @@ export class AuthController {
 
     @Post('login')
     @UseGuards(AuthGuard('local'))
-    async login(@Body(ValidationPipe) loginDto: LoginDto, @Req() req) {
-    return this.authService.login(req.user);
-  }
+    @HttpCode(HttpStatus.OK)
+    async login(@Req() req) {
+      return this.authService.login(req.user);
+    }
+
+    @Post('refresh')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
+    async refreshToken(@Req() req, @Body() refreshTokenDto: RefreshTokenDto) {
+      const userId = req.user.sub;
+      
+      // Valida o refresh token
+      const user = await this.authService.validateRefreshToken(userId, refreshTokenDto.refreshToken);
+      if (!user) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+  
+      // Gera novos tokens
+      const accessToken = this.authService.generateToken(user);
+      const refreshToken = await this.authService.generateRefreshToken(user.id);
+      
+      // Atualiza o refresh token no banco
+      await this.authService.updateRefreshToken(user.id, refreshToken);
+  
+      return {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      };
+    }
 }
+
+
+
