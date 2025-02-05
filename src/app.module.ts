@@ -5,7 +5,7 @@ import { User } from './auth/entities/user.entity';
 import { ProtectedController } from './auth/protected.controller';
 import { ConfigModule } from '@nestjs/config';
 import { InvalidTokenModule } from './invalid-token/invalid-token.module';
-import { InvalidToken } from './auth/entities/invalidToken.entity';
+import { InvalidToken } from './invalid-token/invalidToken.entity';
 import { VerifyInvalidTokenMiddleware } from './auth/middleware/verify-invalid-token.middleware';
 
 

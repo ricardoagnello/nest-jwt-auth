@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { InvalidToken } from 'src/auth/entities/invalidToken.entity';
+import { InvalidToken } from 'src/invalid-token/invalidToken.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
