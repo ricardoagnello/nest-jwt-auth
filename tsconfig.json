@@ -16,6 +16,14 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@app/auth-library": [
+        "libs/auth-library/src"
+      ],
+      "@app/auth-library/*": [
+        "libs/auth-library/src/*"
+      ]
+    }
   }
 }

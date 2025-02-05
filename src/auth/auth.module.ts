@@ -8,9 +8,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProtectedController } from './protected.controller';
+import { InvalidTokenModule } from 'src/invalid-token/invalid-token.module';
 
 @Module({
-    imports: [
+    imports: [InvalidTokenModule,
       TypeOrmModule.forFeature([User]),
       JwtModule.registerAsync({
         imports: [ConfigModule], 

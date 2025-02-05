@@ -3,10 +3,13 @@ import { AuthService } from './auth.service';
 import { LoginDto, RefreshTokenDto, RegisterDto } from './dto/register.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { InvalidTokenService } from 'src/invalid-token/invalid-token.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService){}
+    constructor(private readonly authService: AuthService,
+      private invalidTokenSrvice: InvalidTokenService
+    ){}
 
     @Post('register')
     async register(@Body(ValidationPipe) registerDto: RegisterDto) {
@@ -44,6 +47,17 @@ export class AuthController {
         refresh_token: refreshToken,
       };
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('logout')
+    async logout(@Req() req) {
+      const token = req.headers.authorization.split(' ')[1];
+      await this.invalidTokenSrvice.invalidateToken(token);
+      return { message: 'Logout realizado com sucesso' };
+    }
+
+
+    
 }
 
 

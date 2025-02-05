@@ -1,10 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto, RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcryptjs';
+import { InvalidTokenService } from 'src/invalid-token/invalid-token.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
         @InjectRepository(User)
         private userRepository: Repository<User>,
         private jwtService: JwtService,
+        private invalidTokenService: InvalidTokenService
       ) {}
 
     async register(dto: RegisterDto): Promise<User> {
@@ -69,5 +71,9 @@ export class AuthService {
           return user; // Retorna o usuário se o token for válido
         }
         return null; // Retorna null se o token for inválido
+      }
+
+      async logout(token: string): Promise<void> {
+        await this.invalidTokenService.invalidateToken(token);
       }
 }
